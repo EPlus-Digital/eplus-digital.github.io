@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-sans antialiased;
+  }
+}
+
+@layer utilities {
+  .gradient-primary {
+    background: linear-gradient(135deg, #2A73FF 0%, #1e52cc 100%);
+  }
+  
+  .gradient-overlay {
+    background: linear-gradient(135deg, rgba(42, 115, 255, 0.9) 0%, rgba(30, 82, 204, 0.9) 100%);
+  }
+}
