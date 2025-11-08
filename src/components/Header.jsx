@@ -20,15 +20,17 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="bg-gray-900/95 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-50 shadow-lg">
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 gradient-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-xl">E+</span>
-            </div>
-            <span className="text-xl font-bold text-gray-900">Eplus Digital</span>
+          <Link to="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+            <img 
+              src="/eplus-logo.png" 
+              alt="Eplus Digital Logo" 
+              className="h-10 w-auto object-contain"
+            />
+            <span className="text-xl font-bold text-white hidden sm:block">Eplus Digital</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -40,7 +42,7 @@ const Header = () => {
                 className={`text-sm font-medium transition-colors ${
                   isActive(item.path)
                     ? 'text-primary'
-                    : 'text-gray-700 hover:text-primary'
+                    : 'text-gray-300 hover:text-white'
                 }`}
               >
                 {item.label}
@@ -52,14 +54,14 @@ const Header = () => {
           <div className="flex items-center space-x-4">
             <button
               onClick={toggleLanguage}
-              className="px-3 py-1 text-sm font-medium text-gray-700 hover:text-primary border border-gray-300 rounded-md hover:border-primary transition-colors"
+              className="px-3 py-1 text-sm font-medium text-gray-300 hover:text-white border border-gray-700 rounded-md hover:border-primary transition-colors bg-gray-800/50"
             >
               {language === 'en' ? 'TR' : 'EN'}
             </button>
             
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 text-gray-700 hover:text-primary"
+              className="md:hidden p-2 text-gray-300 hover:text-white"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
@@ -69,7 +71,7 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t">
+          <div className="md:hidden py-4 border-t border-gray-800">
             {navItems.map((item) => (
               <Link
                 key={item.path}
@@ -78,7 +80,7 @@ const Header = () => {
                 className={`block py-2 text-sm font-medium ${
                   isActive(item.path)
                     ? 'text-primary'
-                    : 'text-gray-700 hover:text-primary'
+                    : 'text-gray-300 hover:text-white'
                 }`}
               >
                 {item.label}

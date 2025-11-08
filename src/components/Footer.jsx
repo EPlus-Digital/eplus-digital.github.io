@@ -12,10 +12,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-10 h-10 gradient-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">E+</span>
-              </div>
+            <div className="flex items-center space-x-3 mb-4">
+              <img 
+                src="/eplus-logo.png" 
+                alt="Eplus Digital Logo" 
+                className="h-10 w-auto object-contain"
+              />
               <span className="text-xl font-bold text-white">Eplus Digital</span>
             </div>
             <p className="text-gray-400 mb-4 max-w-md">
