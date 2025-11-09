@@ -52,17 +52,22 @@ const Header = () => {
             to="/" 
             className="flex items-center space-x-3 group relative"
           >
-            <div className="relative transform transition-all duration-500 ease-out group-hover:scale-110 group-active:scale-95">
+            <div className="relative transform transition-transform duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-110 group-active:scale-95 will-change-transform">
               <img 
                 src="/eplus-logo.png" 
                 alt="E+ Digital Logo" 
-                className="h-11 w-auto object-contain relative z-10 transition-all duration-500"
+                className="h-11 w-auto object-contain relative z-10 transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]"
               />
-              <div className="absolute inset-0 bg-primary/30 rounded-xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-cyan-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl"></div>
+              <div className="absolute inset-0 bg-primary/30 rounded-xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] -z-10"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-cyan-500/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] blur-xl"></div>
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent hidden sm:block transition-all duration-300 group-hover:from-primary group-hover:via-cyan-400 group-hover:to-primary">
-              E+ Digital
+            <span className="text-xl font-bold bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent hidden sm:block relative overflow-hidden">
+              <span className="block transition-all duration-1000 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:opacity-0 absolute inset-0 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
+                E+ Digital
+              </span>
+              <span className="block transition-all duration-1000 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] opacity-0 group-hover:opacity-100 bg-gradient-to-r from-primary via-cyan-400 to-primary bg-clip-text text-transparent">
+                E+ Digital
+              </span>
             </span>
           </Link>
 
@@ -110,7 +115,7 @@ const Header = () => {
           <div className="flex items-center space-x-3">
             <button
               onClick={toggleLanguage}
-              className="relative px-4 py-2 text-sm font-semibold text-gray-300 bg-gray-800/60 border border-gray-700/60 rounded-lg overflow-hidden group transition-all duration-300 hover:border-primary/60 hover:bg-primary/10 hover:text-white hover:shadow-lg hover:shadow-primary/20"
+              className="relative px-4 py-3 text-sm font-semibold text-gray-300 bg-gray-800/60 border border-gray-700/60 rounded-md overflow-hidden group transition-all duration-300 hover:border-primary/60 hover:bg-primary/10 hover:text-white hover:shadow-lg hover:shadow-primary/20"
             >
               <span className="relative z-10 flex items-center space-x-1.5 transition-transform duration-300 group-active:scale-95">
                 <span className="inline-block transition-transform duration-300 group-hover:scale-110">{language === 'en' ? 'TR' : 'EN'}</span>
