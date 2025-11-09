@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import {
   FiTarget,
@@ -19,6 +19,66 @@ import {
 
 const About = () => {
   const { t, language } = useLanguage();
+  
+  // Intersection Observer for scroll animations
+  const observerRef = useRef(null);
+  
+  useEffect(() => {
+    // Scroll to top when page loads
+    window.scrollTo(0, 0);
+    
+    const observerOptions = {
+      threshold: 0.05,
+      rootMargin: '0px 0px -100px 0px',
+    };
+
+    observerRef.current = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in-visible');
+          // Unobserve after animation to improve performance
+          if (observerRef.current) {
+            observerRef.current.unobserve(entry.target);
+          }
+        }
+      });
+    }, observerOptions);
+
+    // Observe elements after component mounts
+    const observeElements = () => {
+      const elements = document.querySelectorAll('.fade-in-on-scroll');
+      elements.forEach((el) => {
+        // Check if element is already in viewport (above the fold)
+        const rect = el.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        const isInViewport = rect.top < viewportHeight * 1.5 && rect.bottom > -100;
+        
+        if (isInViewport) {
+          // If already in viewport, trigger animation immediately
+          setTimeout(() => {
+            el.classList.add('fade-in-visible');
+          }, 100);
+        } else if (observerRef.current) {
+          // Otherwise, observe for scroll
+          observerRef.current.observe(el);
+        }
+      });
+    };
+
+    // Check after a short delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      observeElements();
+      // Check again after animations might have started
+      setTimeout(observeElements, 200);
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
 
   const values = [
     {
@@ -111,12 +171,12 @@ const About = () => {
         
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 leading-tight animate-fade-in-up">
               <span className="block bg-gradient-to-r from-white via-blue-100 to-cyan-200 bg-clip-text text-transparent">
                 {t.about.title}
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed animate-fade-in-up-delay-1">
               {t.about.story.content}
             </p>
           </div>
@@ -128,7 +188,7 @@ const About = () => {
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-4xl mx-auto fade-in-on-scroll">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-1 bg-gradient-to-r from-primary to-cyan-500 rounded-full"></div>
               <h2 className="text-2xl md:text-3xl font-bold text-white">
@@ -148,7 +208,9 @@ const About = () => {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="group relative bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1">
+            <div 
+              className="group relative bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1 fade-in-on-scroll"
+            >
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-cyan-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div className="relative z-10">
                 <div className="w-16 h-16 bg-gradient-to-br from-primary to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -162,7 +224,10 @@ const About = () => {
                 </p>
               </div>
             </div>
-            <div className="group relative bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1">
+            <div 
+              className="group relative bg-gray-800/60 backdrop-blur-sm p-8 rounded-2xl border border-gray-700/50 hover:border-primary/50 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1 fade-in-on-scroll"
+              style={{ transitionDelay: '0.15s' }}
+            >
               <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-cyan-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <div className="relative z-10">
                 <div className="w-16 h-16 bg-gradient-to-br from-primary to-cyan-500 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -185,7 +250,7 @@ const About = () => {
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 fade-in-on-scroll">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               {t.about.values.title}
             </h2>
@@ -194,7 +259,10 @@ const About = () => {
             {values.map((value, index) => (
               <div 
                 key={index} 
-                className="group relative bg-gray-800/60 backdrop-blur-sm p-6 rounded-2xl border border-gray-700/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-2 text-center"
+                className="group relative bg-gray-800/60 backdrop-blur-sm p-6 rounded-2xl border border-gray-700/50 hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-2 text-center fade-in-on-scroll"
+                style={{
+                  transitionDelay: `${0.1 + index * 0.1}s`
+                }}
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-cyan-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <div className="relative z-10">
@@ -217,7 +285,7 @@ const About = () => {
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 fade-in-on-scroll">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               {language === 'en' ? 'Our Tech Stack' : 'Teknoloji Yığınımız'}
             </h2>
@@ -231,7 +299,7 @@ const About = () => {
           {/* Tech Stack Categories */}
           <div className="max-w-7xl mx-auto space-y-12">
             {/* AI & Data Science */}
-            <div>
+            <div className="fade-in-on-scroll">
               <div className="flex items-center gap-3 mb-6">
                 <FiCpu className="text-primary" size={24} />
                 <h3 className="text-2xl font-bold text-white">
@@ -242,7 +310,10 @@ const About = () => {
                 {techStack.filter(tech => tech.category === 'ai').map((tech, index) => (
                   <div
                     key={index}
-                    className="group px-4 py-2.5 bg-gray-800/60 backdrop-blur-sm rounded-lg border border-gray-700/50 hover:border-primary/50 text-gray-300 hover:text-white text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 cursor-default"
+                    className="group px-4 py-2.5 bg-gray-800/60 backdrop-blur-sm rounded-lg border border-gray-700/50 hover:border-primary/50 text-gray-300 hover:text-white text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 cursor-default fade-in-on-scroll-tech"
+                    style={{
+                      transitionDelay: `${index * 0.02}s`
+                    }}
                   >
                     <div className="flex items-center gap-2">
                       <tech.icon className="text-primary opacity-70 group-hover:opacity-100 transition-opacity" size={16} />
@@ -254,7 +325,7 @@ const About = () => {
             </div>
 
             {/* Backend & API */}
-            <div>
+            <div className="fade-in-on-scroll">
               <div className="flex items-center gap-3 mb-6">
                 <FiServer className="text-primary" size={24} />
                 <h3 className="text-2xl font-bold text-white">
@@ -262,11 +333,14 @@ const About = () => {
                 </h3>
               </div>
               <div className="flex flex-wrap gap-3">
-                {techStack.filter(tech => tech.category === 'backend').map((tech, index) => (
-                  <div
-                    key={index}
-                    className="group px-4 py-2.5 bg-gray-800/60 backdrop-blur-sm rounded-lg border border-gray-700/50 hover:border-primary/50 text-gray-300 hover:text-white text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 cursor-default"
-                  >
+                    {techStack.filter(tech => tech.category === 'backend').map((tech, index) => (
+                      <div
+                        key={index}
+                        className="group px-4 py-2.5 bg-gray-800/60 backdrop-blur-sm rounded-lg border border-gray-700/50 hover:border-primary/50 text-gray-300 hover:text-white text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 cursor-default fade-in-on-scroll-tech"
+                        style={{
+                          transitionDelay: `${index * 0.02}s`
+                        }}
+                      >
                     <div className="flex items-center gap-2">
                       <tech.icon className="text-primary opacity-70 group-hover:opacity-100 transition-opacity" size={16} />
                       <span>{tech.name}</span>
@@ -277,7 +351,7 @@ const About = () => {
             </div>
 
             {/* Mobile & Web */}
-            <div>
+            <div className="fade-in-on-scroll">
               <div className="flex items-center gap-3 mb-6">
                 <FiSmartphone className="text-primary" size={24} />
                 <h3 className="text-2xl font-bold text-white">
@@ -285,11 +359,14 @@ const About = () => {
                 </h3>
               </div>
               <div className="flex flex-wrap gap-3">
-                {techStack.filter(tech => tech.category === 'mobile').map((tech, index) => (
-                  <div
-                    key={index}
-                    className="group px-4 py-2.5 bg-gray-800/60 backdrop-blur-sm rounded-lg border border-gray-700/50 hover:border-primary/50 text-gray-300 hover:text-white text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 cursor-default"
-                  >
+                    {techStack.filter(tech => tech.category === 'mobile').map((tech, index) => (
+                      <div
+                        key={index}
+                        className="group px-4 py-2.5 bg-gray-800/60 backdrop-blur-sm rounded-lg border border-gray-700/50 hover:border-primary/50 text-gray-300 hover:text-white text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 cursor-default fade-in-on-scroll-tech"
+                        style={{
+                          transitionDelay: `${index * 0.02}s`
+                        }}
+                      >
                     <div className="flex items-center gap-2">
                       <tech.icon className="text-primary opacity-70 group-hover:opacity-100 transition-opacity" size={16} />
                       <span>{tech.name}</span>
@@ -300,7 +377,7 @@ const About = () => {
             </div>
 
             {/* Project Management */}
-            <div>
+            <div className="fade-in-on-scroll">
               <div className="flex items-center gap-3 mb-6">
                 <FiGitBranch className="text-primary" size={24} />
                 <h3 className="text-2xl font-bold text-white">
@@ -308,11 +385,14 @@ const About = () => {
                 </h3>
               </div>
               <div className="flex flex-wrap gap-3">
-                {techStack.filter(tech => tech.category === 'pm').map((tech, index) => (
-                  <div
-                    key={index}
-                    className="group px-4 py-2.5 bg-gray-800/60 backdrop-blur-sm rounded-lg border border-gray-700/50 hover:border-primary/50 text-gray-300 hover:text-white text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 cursor-default"
-                  >
+                    {techStack.filter(tech => tech.category === 'pm').map((tech, index) => (
+                      <div
+                        key={index}
+                        className="group px-4 py-2.5 bg-gray-800/60 backdrop-blur-sm rounded-lg border border-gray-700/50 hover:border-primary/50 text-gray-300 hover:text-white text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-1 cursor-default fade-in-on-scroll-tech"
+                        style={{
+                          transitionDelay: `${index * 0.02}s`
+                        }}
+                      >
                     <div className="flex items-center gap-2">
                       <tech.icon className="text-primary opacity-70 group-hover:opacity-100 transition-opacity" size={16} />
                       <span>{tech.name}</span>
@@ -330,7 +410,7 @@ const About = () => {
         {/* Background Pattern */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 fade-in-on-scroll">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               {t.about.team.title}
             </h2>
@@ -341,7 +421,7 @@ const About = () => {
             </p>
           </div>
           <div className="max-w-5xl mx-auto">
-            <div className="bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 md:p-12 text-center">
+            <div className="bg-gray-800/60 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-8 md:p-12 text-center fade-in-on-scroll" style={{ transitionDelay: '0.2s' }}>
               <div className="w-32 h-32 bg-gradient-to-br from-primary to-cyan-500 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-2xl shadow-primary/30">
                 <FiUsers className="text-white" size={48} />
               </div>
@@ -357,6 +437,55 @@ const About = () => {
           </div>
         </div>
       </section>
+
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fade-in-up {
+          animation: fadeInUp 0.8s ease-out both;
+        }
+
+        .animate-fade-in-up-delay-1 {
+          animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .animate-fade-in-up-delay-2 {
+          animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        /* Scroll-based animations */
+        .fade-in-on-scroll {
+          opacity: 0;
+          transform: translateY(40px);
+          transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .fade-in-on-scroll.fade-in-visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        /* Tech stack items animation - triggered by parent */
+        .fade-in-on-scroll.fade-in-visible .fade-in-on-scroll-tech {
+          opacity: 1;
+          transform: translateY(0);
+        }
+
+        .fade-in-on-scroll-tech {
+          opacity: 0;
+          transform: translateY(20px);
+          transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+      `}</style>
     </div>
   );
 };

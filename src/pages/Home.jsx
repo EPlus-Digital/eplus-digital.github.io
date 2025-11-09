@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import Hero from '../components/Hero';
 import {
@@ -14,6 +14,10 @@ import {
 
 const Home = () => {
   const { t } = useLanguage();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const services = [
     {
@@ -74,16 +78,20 @@ const Home = () => {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 animate-fade-in-up">
               {t.home.services.title}
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-primary to-cyan-500 mx-auto"></div>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary to-cyan-500 mx-auto animate-fade-in-up-delay-1"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {services.map((service, index) => (
               <div
                 key={index}
-                className="group relative bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 hover:border-primary/50 transition-all hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20"
+                className="group relative bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 hover:border-primary/50 transition-all hover:transform hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/20 animate-fade-in-up"
+                style={{
+                  animationDelay: `${0.2 + index * 0.1}s`,
+                  animationFillMode: 'both'
+                }}
               >
                 <div className="w-14 h-14 gradient-primary rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <service.icon className="text-white" size={28} />
@@ -102,14 +110,21 @@ const Home = () => {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808008_1px,transparent_1px),linear-gradient(to_bottom,#80808008_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4 animate-fade-in-up">
               {t.home.why.title}
             </h2>
-            <div className="w-24 h-1 bg-gradient-to-r from-primary to-cyan-500 mx-auto"></div>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary to-cyan-500 mx-auto animate-fade-in-up-delay-1"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
             {whyChoose.map((item, index) => (
-              <div key={index} className="text-center group">
+              <div 
+                key={index} 
+                className="text-center group animate-fade-in-up"
+                style={{
+                  animationDelay: `${0.3 + index * 0.1}s`,
+                  animationFillMode: 'both'
+                }}
+              >
                 <div className="w-20 h-20 gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-3 transition-all shadow-lg shadow-primary/50">
                   <item.icon className="text-white" size={32} />
                 </div>
@@ -120,6 +135,27 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-fade-in-up {
+          animation: fadeInUp 0.8s ease-out both;
+        }
+
+        .animate-fade-in-up-delay-1 {
+          animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+      `}</style>
     </div>
   );
 };

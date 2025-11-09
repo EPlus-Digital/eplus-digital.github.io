@@ -8,6 +8,17 @@ import About from './pages/About';
 import Services from './pages/Services';
 import Contact from './pages/Contact';
 
+// Scroll to top on route change
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 // Handle GitHub Pages 404.html redirect
 function RedirectHandler() {
   const location = useLocation();
@@ -32,6 +43,7 @@ function RedirectHandler() {
 function AppRoutes() {
   return (
     <>
+      <ScrollToTop />
       <RedirectHandler />
       <div className="min-h-screen flex flex-col">
         <Header />
