@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import {
   FiSmartphone,
-  FiLayers,
+  FiCpu,
   FiGlobe,
   FiTrendingUp,
   FiCheck,
@@ -22,10 +22,10 @@ const Services = () => {
       color: 'from-blue-500 to-blue-600',
     },
     {
-      icon: FiLayers,
-      title: t.services.design.title,
-      description: t.services.design.desc,
-      features: t.services.design.features,
+      icon: FiCpu,
+      title: t.services.ai.title,
+      description: t.services.ai.desc,
+      features: t.services.ai.features,
       color: 'from-purple-500 to-purple-600',
     },
     {

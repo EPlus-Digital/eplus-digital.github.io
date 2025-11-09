@@ -11,9 +11,9 @@ export const translations = {
     home: {
       hero: {
         headline: "We Build the Future of Mobile Experiences",
-        subheadline: "Eplus Digital helps startups and enterprises build exceptional mobile apps, faster.",
+        subheadline: "E+ Digital helps startups and enterprises build exceptional mobile apps, faster.",
         cta1: "Get a Quote",
-        cta2: "See Our Work",
+        cta2: "Our Services",
       },
       services: {
         title: "Our Services",
@@ -21,9 +21,9 @@ export const translations = {
           title: "Mobile App Development",
           desc: "Native and cross-platform mobile applications",
         },
-        design: {
-          title: "UI/UX Design",
-          desc: "Beautiful, intuitive user experiences",
+        ai: {
+          title: "Artificial Intelligence",
+          desc: "AI-powered solutions and automation",
         },
         web: {
           title: "Web & Backend Development",
@@ -39,13 +39,13 @@ export const translations = {
         viewCase: "View Case Study",
       },
       why: {
-        title: "Why Choose Eplus Digital",
+        title: "Why Choose E+ Digital",
         quality: "Quality Code",
         qualityDesc: "Clean, maintainable, and scalable code",
         fast: "Fast Delivery",
         fastDesc: "Agile development with quick iterations",
-        modern: "Modern Design",
-        modernDesc: "Cutting-edge UI/UX design",
+        modern: "Modern Technology",
+        modernDesc: "Latest tech stack and best practices",
         transparent: "Transparent Communication",
         transparentDesc: "Regular updates and clear communication",
       },
@@ -61,7 +61,7 @@ export const translations = {
       title: "About Us",
       story: {
         title: "Our Story",
-        content: "Eplus Digital was founded to empower businesses through mobile innovation. We combine technical expertise with creative vision to deliver digital products that make a difference.",
+        content: "E+ Digital was founded to empower businesses through mobile innovation. We combine technical expertise with creative vision to deliver digital products that make a difference.",
       },
       mission: {
         title: "Mission",
@@ -89,10 +89,10 @@ export const translations = {
         desc: "We build native iOS and Android apps, as well as cross-platform solutions using React Native and Flutter. From MVP to enterprise-scale applications.",
         features: ["iOS Development", "Android Development", "Cross-platform (React Native, Flutter)", "App Maintenance & Updates"],
       },
-      design: {
-        title: "UI/UX Design",
-        desc: "User-centered design that combines aesthetics with functionality. We create intuitive interfaces that users love.",
-        features: ["Wireframing & Prototyping", "User Research", "Visual Design", "Usability Testing"],
+      ai: {
+        title: "Artificial Intelligence",
+        desc: "Leverage the power of AI to automate processes, gain insights, and create intelligent applications. From machine learning models to AI-powered features.",
+        features: ["Machine Learning Models", "AI Integration", "Automation Solutions", "Data Analysis & Insights"],
       },
       web: {
         title: "Web & Backend Development",
@@ -147,13 +147,13 @@ export const translations = {
       },
     },
     footer: {
-      description: "Eplus Digital helps startups and enterprises build exceptional mobile apps and digital products.",
+      description: "E+ Digital helps startups and enterprises build exceptional mobile apps and digital products.",
       links: {
         privacy: "Privacy Policy",
         terms: "Terms of Service",
         kvkk: "KVKK",
       },
-      copyright: "© 2025 Eplus Digital. All rights reserved.",
+      copyright: "© 2025 E+ Digital. All rights reserved.",
     },
   },
   tr: {
@@ -168,9 +168,9 @@ export const translations = {
     home: {
       hero: {
         headline: "Mobil Deneyimin Geleceğini İnşa Ediyoruz",
-        subheadline: "Eplus Digital, girişimlerin ve kuruluşların olağanüstü mobil uygulamaları daha hızlı geliştirmesine yardımcı olur.",
+        subheadline: "E+ Digital, girişimlerin ve kuruluşların olağanüstü mobil uygulamaları daha hızlı geliştirmesine yardımcı olur.",
         cta1: "Teklif Al",
-        cta2: "Projelerimizi Gör",
+        cta2: "Hizmetlerimiz",
       },
       services: {
         title: "Hizmetlerimiz",
@@ -178,9 +178,9 @@ export const translations = {
           title: "Mobil Uygulama Geliştirme",
           desc: "Native ve cross-platform mobil uygulamalar",
         },
-        design: {
-          title: "UI/UX Tasarım",
-          desc: "Güzel, sezgisel kullanıcı deneyimleri",
+        ai: {
+          title: "Yapay Zeka",
+          desc: "AI destekli çözümler ve otomasyon",
         },
         web: {
           title: "Web & Backend Geliştirme",
@@ -196,13 +196,13 @@ export const translations = {
         viewCase: "Vaka Çalışmasını Gör",
       },
       why: {
-        title: "Neden Eplus Digital",
+        title: "Neden E+ Digital",
         quality: "Kaliteli Kod",
         qualityDesc: "Temiz, sürdürülebilir ve ölçeklenebilir kod",
         fast: "Hızlı Teslimat",
         fastDesc: "Hızlı iterasyonlarla çevik geliştirme",
-        modern: "Modern Tasarım",
-        modernDesc: "Son teknoloji UI/UX tasarımı",
+        modern: "Modern Teknoloji",
+        modernDesc: "En son teknoloji yığını ve en iyi uygulamalar",
         transparent: "Şeffaf İletişim",
         transparentDesc: "Düzenli güncellemeler ve net iletişim",
       },
@@ -218,7 +218,7 @@ export const translations = {
       title: "Hakkımızda",
       story: {
         title: "Hikayemiz",
-        content: "Eplus Digital, işletmeleri mobil inovasyon yoluyla güçlendirmek için kuruldu. Fark yaratan dijital ürünler sunmak için teknik uzmanlığı yaratıcı vizyonla birleştiriyoruz.",
+        content: "E+ Digital, işletmeleri mobil inovasyon yoluyla güçlendirmek için kuruldu. Fark yaratan dijital ürünler sunmak için teknik uzmanlığı yaratıcı vizyonla birleştiriyoruz.",
       },
       mission: {
         title: "Misyon",
@@ -246,10 +246,10 @@ export const translations = {
         desc: "Native iOS ve Android uygulamaları, ayrıca React Native ve Flutter kullanarak cross-platform çözümler geliştiriyoruz. MVP'den kurumsal ölçekli uygulamalara kadar.",
         features: ["iOS Geliştirme", "Android Geliştirme", "Cross-platform (React Native, Flutter)", "Uygulama Bakımı & Güncellemeler"],
       },
-      design: {
-        title: "UI/UX Tasarım",
-        desc: "Estetik ve işlevselliği birleştiren kullanıcı odaklı tasarım. Kullanıcıların sevdiği sezgisel arayüzler oluşturuyoruz.",
-        features: ["Wireframing & Prototipleme", "Kullanıcı Araştırması", "Görsel Tasarım", "Kullanılabilirlik Testi"],
+      ai: {
+        title: "Yapay Zeka",
+        desc: "Süreçleri otomatikleştirmek, içgörüler kazanmak ve akıllı uygulamalar oluşturmak için AI'nın gücünden yararlanın. Makine öğrenmesi modellerinden AI destekli özelliklere kadar.",
+        features: ["Makine Öğrenmesi Modelleri", "AI Entegrasyonu", "Otomasyon Çözümleri", "Veri Analizi & İçgörüler"],
       },
       web: {
         title: "Web & Backend Geliştirme",
@@ -304,13 +304,13 @@ export const translations = {
       },
     },
     footer: {
-      description: "Eplus Digital, girişimlerin ve kuruluşların olağanüstü mobil uygulamalar ve dijital ürünler geliştirmesine yardımcı olur.",
+      description: "E+ Digital, girişimlerin ve kuruluşların olağanüstü mobil uygulamalar ve dijital ürünler geliştirmesine yardımcı olur.",
       links: {
         privacy: "Gizlilik Politikası",
         terms: "Hizmet Şartları",
         kvkk: "KVKK",
       },
-      copyright: "© 2025 Eplus Digital. Tüm hakları saklıdır.",
+      copyright: "© 2025 E+ Digital. Tüm hakları saklıdır.",
     },
   },
 };

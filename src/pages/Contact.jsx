@@ -137,10 +137,10 @@ const Contact = () => {
                       {t.contact.info.email}
                     </h3>
                     <a
-                      href="mailto:info@eplusdigital.com"
+                      href="mailto:infoeplusdigital@gmail.com"
                       className="text-gray-600 hover:text-primary transition-colors"
                     >
-                      info@eplusdigital.com
+                      infoeplusdigital@gmail.com
                     </a>
                   </div>
                 </div>
@@ -154,10 +154,10 @@ const Contact = () => {
                       {t.contact.info.phone}
                     </h3>
                     <a
-                      href="tel:+905551234567"
+                      href="tel:+905378529502"
                       className="text-gray-600 hover:text-primary transition-colors"
                     >
-                      +90 555 123 45 67
+                      +90 537 852 95 02
                     </a>
                   </div>
                 </div>
