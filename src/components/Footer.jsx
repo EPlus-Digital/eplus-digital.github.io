@@ -7,7 +7,7 @@ const Footer = () => {
   const { t } = useLanguage();
 
   return (
-    <footer className="relative bg-gradient-to-br from-slate-950 via-gray-950 to-slate-900 border-t-2 border-slate-800/80">
+    <footer className="relative bg-gradient-to-br from-slate-950 via-gray-950 to-slate-900 border-t-2 border-slate-800/80 w-full overflow-x-hidden">
       {/* Top Gradient Border - More Prominent */}
       <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/60 to-transparent"></div>
       

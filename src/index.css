@@ -3,8 +3,32 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply font-sans antialiased;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  #root {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 }
 
@@ -60,7 +84,3 @@
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}

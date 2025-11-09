@@ -27,7 +27,31 @@
 
       var segmentCount = 0;
 
+      // Prevent infinite loop - if we're already on a redirect URL, don't redirect again
       var l = window.location;
+      var search = l.search;
+      
+      // If we're already redirected (has ?/ in search) or on root, don't redirect
+      if (search && search.indexOf('?/') !== -1) {
+        // Already redirected, let React Router handle it
+        return;
+      }
+      
+      // If we're on the root path and no special query, don't redirect
+      if (l.pathname === '/' && !search) {
+        return;
+      }
+      
+      // Only redirect if we're not on the index.html (404 case)
+      var pathSegments = l.pathname.split('/').filter(function(segment) {
+        return segment !== '';
+      });
+      
+      // If pathname is just '/' or empty, don't redirect (root page)
+      if (pathSegments.length === 0 || (pathSegments.length === 1 && pathSegments[0] === 'index.html')) {
+        return;
+      }
+
       l.replace(
         l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
         l.pathname.split('/').slice(0, 1 + segmentCount).join('/') + '/?/' +
