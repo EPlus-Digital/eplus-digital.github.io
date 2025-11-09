@@ -54,7 +54,7 @@ const Header = () => {
           >
             <div className="relative transform transition-transform duration-700 ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:scale-110 group-active:scale-95 will-change-transform">
               <img 
-                src="/eplus-logo.png" 
+                src="/logo-bg.png" 
                 alt="E+ Digital Logo" 
                 className="h-11 w-auto object-contain relative z-10 transition-all duration-700 ease-[cubic-bezier(0.4,0,0.2,1)]"
               />

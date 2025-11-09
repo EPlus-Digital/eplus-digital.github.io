@@ -27,7 +27,7 @@ const Footer = () => {
             <div className="flex items-center space-x-3 mb-6">
               <div className="relative p-2 rounded-xl bg-gradient-to-br from-primary/20 to-cyan-500/20 border border-primary/20">
                 <img 
-                  src="/eplus-logo.png" 
+                  src="/logo-bg.png" 
                   alt="E+ Digital Logo" 
                   className="h-8 w-auto object-contain"
                 />
