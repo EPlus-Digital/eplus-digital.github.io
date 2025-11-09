@@ -23,59 +23,82 @@ function ScrollToTop() {
 function RedirectHandler() {
   const location = useLocation();
   const navigate = useNavigate();
-  const hasRedirected = useRef(false);
+  const redirectProcessed = useRef(false);
 
   useEffect(() => {
-    // Only process redirect once on initial mount
+    // Only process redirect on initial mount or if search changes from initial
     // This prevents infinite loops
-    if (hasRedirected.current) {
+    const currentSearch = location.search;
+    
+    // Skip if we've already processed a redirect
+    if (redirectProcessed.current) {
+      // Only clean up URL if there are redirect markers but we've already processed
+      if (currentSearch && (currentSearch.includes('_redirected') || currentSearch.includes('/'))) {
+        const cleanUrl = location.pathname + (location.hash || '');
+        if (window.location.href !== window.location.origin + cleanUrl) {
+          window.history.replaceState({}, '', cleanUrl);
+        }
+      }
       return;
     }
 
-    const search = location.search;
-    const pathname = location.pathname;
-    
-    // Check if we have the GitHub Pages redirect pattern from 404.html
-    // Format: /?/about means we need to redirect to /about
-    if (search && search.startsWith('?/')) {
-      // Mark as redirected immediately to prevent re-processing
-      hasRedirected.current = true;
+    // Process redirect only if search contains redirect pattern
+    if (currentSearch && currentSearch.includes('/')) {
+      // Mark as processed immediately
+      redirectProcessed.current = true;
       
-      // Extract the actual path from the query string
-      let actualPath = search.substring(2); // Remove '?/'
+      // Extract path from query string format: ?/path&_redirected=1
+      let queryString = currentSearch.substring(1); // Remove '?'
+      let actualPath = '';
+      let hash = location.hash || '';
+      
+      // Parse query string
+      if (queryString.startsWith('/')) {
+        // Split by & to separate path from _redirected parameter
+        const parts = queryString.split('&');
+        actualPath = parts[0].substring(1); // Remove leading '/'
+        
+        // Handle hash if present in path
+        const hashIndex = actualPath.indexOf('#');
+        if (hashIndex !== -1) {
+          hash = actualPath.substring(hashIndex);
+          actualPath = actualPath.substring(0, hashIndex);
+        }
+      }
+      
+      // Restore & characters that were encoded as ~and~
       actualPath = actualPath.replace(/~and~/g, '&');
       
-      // Parse hash if present
-      const hashIndex = actualPath.indexOf('#');
-      let path = actualPath;
-      let hash = '';
-      
-      if (hashIndex !== -1) {
-        path = actualPath.substring(0, hashIndex);
-        hash = actualPath.substring(hashIndex);
-      }
-      
       // Ensure path starts with /
-      if (!path.startsWith('/')) {
-        path = '/' + path;
+      if (!actualPath.startsWith('/')) {
+        actualPath = '/' + actualPath;
       }
       
-      // Build final path with hash
-      const targetPath = path + hash;
+      // Build clean target path
+      const targetPath = actualPath + hash;
       
-      // Only redirect if we're not already on the target path
-      // This prevents unnecessary redirects
-      if (pathname !== path) {
-        // Use React Router navigate with replace to clean the URL
-        // This removes the ?/ parameter from the URL and updates to clean path
-        navigate(targetPath, { replace: true });
-      } else {
-        // Already on the correct path, just clean the URL by removing query params
-        window.history.replaceState({}, '', pathname + hash);
+      // Clear sessionStorage redirect flag and counter
+      // This prevents future redirects from being blocked
+      try {
+        sessionStorage.removeItem('github-pages-redirect');
+      } catch (e) {
+        // Ignore sessionStorage errors
       }
+      
+      // Navigate to clean path immediately
+      // This removes the query parameters and sets the correct route
+      navigate(targetPath, { replace: true });
+      
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Empty dependency array - only run once on mount
+    
+    // If no redirect pattern but search has redirect markers, clean up
+    if (currentSearch && currentSearch.includes('_redirected')) {
+      redirectProcessed.current = true;
+      const cleanUrl = location.pathname + (location.hash || '');
+      window.history.replaceState({}, '', cleanUrl);
+    }
+  }, []); // Empty dependency - only run once on mount
 
   return null;
 }

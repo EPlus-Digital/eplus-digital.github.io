@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { FiMail, FiPhone, FiMapPin, FiSend, FiMessageCircle, FiCheckCircle, FiAlertCircle, FiLoader } from 'react-icons/fi';
+import { FiMail, FiPhone, FiMapPin, FiSend, FiMessageCircle, FiCheckCircle, FiAlertCircle, FiLoader, FiX } from 'react-icons/fi';
 import emailjs from '@emailjs/browser';
 
 const Contact = () => {
@@ -11,8 +11,9 @@ const Contact = () => {
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', null
-  const [submitMessage, setSubmitMessage] = useState('');
+  const [toast, setToast] = useState(null); // { type: 'success' | 'error', message: string }
+  const toastTimeoutRef = useRef(null);
+  const lastSubmissionTimeRef = useRef(0);
 
   // Intersection Observer for scroll animations
   const observerRef = useRef(null);
@@ -75,8 +76,52 @@ const Contact = () => {
     }
   }, []);
 
+  // Auto-hide toast after 5 seconds
+  useEffect(() => {
+    if (toast) {
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+      }
+      toastTimeoutRef.current = setTimeout(() => {
+        setToast(null);
+      }, 5000);
+    }
+    return () => {
+      if (toastTimeoutRef.current) {
+        clearTimeout(toastTimeoutRef.current);
+      }
+    };
+  }, [toast]);
+
+  const showToast = (type, message) => {
+    setToast({ type, message });
+  };
+
+  const hideToast = () => {
+    setToast(null);
+    if (toastTimeoutRef.current) {
+      clearTimeout(toastTimeoutRef.current);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Rate limiting: Prevent too many submissions (max 1 per 10 seconds)
+    const now = Date.now();
+    const timeSinceLastSubmission = now - lastSubmissionTimeRef.current;
+    const minTimeBetweenSubmissions = 10000; // 10 seconds
+    
+    if (timeSinceLastSubmission < minTimeBetweenSubmissions) {
+      const remainingTime = Math.ceil((minTimeBetweenSubmissions - timeSinceLastSubmission) / 1000);
+      showToast(
+        'error',
+        language === 'en'
+          ? `Please wait ${remainingTime} second${remainingTime > 1 ? 's' : ''} before submitting again.`
+          : `Lütfen tekrar göndermeden önce ${remainingTime} saniye bekleyin.`
+      );
+      return;
+    }
     
     // Get EmailJS configuration from environment variables
     const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
@@ -85,13 +130,13 @@ const Contact = () => {
 
     // Check if EmailJS is configured
     if (!serviceId || !templateId || !publicKey) {
-      setSubmitStatus('error');
       const missingVars = [];
       if (!serviceId) missingVars.push('VITE_EMAILJS_SERVICE_ID');
       if (!templateId) missingVars.push('VITE_EMAILJS_TEMPLATE_ID');
       if (!publicKey) missingVars.push('VITE_EMAILJS_PUBLIC_KEY');
       
-      setSubmitMessage(
+      showToast(
+        'error',
         language === 'en'
           ? `Email service is not configured. Missing: ${missingVars.join(', ')}. Please check your .env file and restart the dev server.`
           : `E-posta servisi yapılandırılmamış. Eksik: ${missingVars.join(', ')}. Lütfen .env dosyanızı kontrol edin ve dev server'ı yeniden başlatın.`
@@ -100,8 +145,7 @@ const Contact = () => {
     }
 
     setIsSubmitting(true);
-    setSubmitStatus(null);
-    setSubmitMessage('');
+    setToast(null);
 
     try {
       // Prepare template parameters
@@ -116,9 +160,12 @@ const Contact = () => {
       // Send email using EmailJS
       await emailjs.send(serviceId, templateId, templateParams, publicKey);
 
-      // Success
-      setSubmitStatus('success');
-      setSubmitMessage(
+      // Update last submission time
+      lastSubmissionTimeRef.current = Date.now();
+
+      // Success - show toast notification
+      showToast(
+        'success',
         language === 'en'
           ? 'Thank you for your message! We will get back to you soon.'
           : 'Mesajınız için teşekkürler! En kısa sürede size dönüş yapacağız.'
@@ -126,16 +173,10 @@ const Contact = () => {
 
       // Reset form
       setFormData({ name: '', email: '', message: '' });
-
-      // Clear success message after 5 seconds
-      setTimeout(() => {
-        setSubmitStatus(null);
-        setSubmitMessage('');
-      }, 5000);
     } catch (error) {
       console.error('EmailJS Error:', error);
-      setSubmitStatus('error');
-      setSubmitMessage(
+      showToast(
+        'error',
         language === 'en'
           ? 'Sorry, there was an error sending your message. Please try again later or contact us directly at infoeplusdigital@gmail.com'
           : 'Üzgünüz, mesajınız gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin veya doğrudan infoeplusdigital@gmail.com adresinden bizimle iletişime geçin.'
@@ -154,6 +195,62 @@ const Contact = () => {
 
   return (
     <div className="bg-gray-900 min-h-screen">
+      {/* Toast Notification */}
+      {toast && (
+        <div className={`fixed bottom-4 right-4 z-50 max-w-md w-full mx-4 toast-notification toast-${toast.type}`}>
+          <div className={`relative flex items-start gap-4 p-5 rounded-2xl border backdrop-blur-xl shadow-2xl ${
+            toast.type === 'success'
+              ? 'bg-gradient-to-br from-green-500/20 via-green-500/10 to-green-500/5 border-green-500/30 text-green-100'
+              : 'bg-gradient-to-br from-red-500/20 via-red-500/10 to-red-500/5 border-red-500/30 text-red-100'
+          }`}>
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808005_1px,transparent_1px),linear-gradient(to_bottom,#80808005_1px,transparent_1px)] bg-[size:16px_16px] rounded-2xl opacity-50"></div>
+            
+            {/* Icon */}
+            <div className={`relative z-10 flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
+              toast.type === 'success'
+                ? 'bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/30'
+                : 'bg-gradient-to-br from-red-500 to-rose-600 shadow-lg shadow-red-500/30'
+            }`}>
+              {toast.type === 'success' ? (
+                <FiCheckCircle className="text-white" size={20} />
+              ) : (
+                <FiAlertCircle className="text-white" size={20} />
+              )}
+            </div>
+            
+            {/* Message */}
+            <div className="relative z-10 flex-1 pt-1">
+              <p className="text-sm font-medium leading-relaxed">{toast.message}</p>
+            </div>
+            
+            {/* Close Button */}
+            <button
+              onClick={hideToast}
+              className={`relative z-10 flex-shrink-0 p-1.5 rounded-lg transition-all hover:bg-white/10 ${
+                toast.type === 'success'
+                  ? 'text-green-300 hover:text-green-100'
+                  : 'text-red-300 hover:text-red-100'
+              }`}
+              aria-label="Close"
+            >
+              <FiX size={18} />
+            </button>
+            
+            {/* Progress Bar */}
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-2xl overflow-hidden">
+              <div
+                className={`h-full ${
+                  toast.type === 'success'
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-500'
+                    : 'bg-gradient-to-r from-red-500 to-rose-500'
+                } toast-progress`}
+              ></div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 bg-gradient-to-br from-gray-900 via-gray-900/98 to-gray-900 overflow-hidden">
         {/* Background Pattern */}
@@ -247,6 +344,7 @@ const Contact = () => {
                       placeholder={language === 'en' ? 'Tell us about your project...' : 'Projeniz hakkında bize bilgi verin...'}
                     />
                   </div>
+
                   <button
                     type="submit"
                     disabled={isSubmitting}
@@ -266,24 +364,6 @@ const Contact = () => {
                       </>
                     )}
                   </button>
-
-                  {/* Status Message */}
-                  {submitStatus && (
-                    <div
-                      className={`mt-4 p-4 rounded-lg flex items-start gap-3 ${
-                        submitStatus === 'success'
-                          ? 'bg-green-500/10 border border-green-500/30 text-green-400'
-                          : 'bg-red-500/10 border border-red-500/30 text-red-400'
-                      }`}
-                    >
-                      {submitStatus === 'success' ? (
-                        <FiCheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                      ) : (
-                        <FiAlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                      )}
-                      <p className="text-sm leading-relaxed">{submitMessage}</p>
-                    </div>
-                  )}
                 </form>
               </div>
             </div>
@@ -399,6 +479,60 @@ const Contact = () => {
         .fade-in-on-scroll.fade-in-visible {
           opacity: 1;
           transform: translateY(0);
+        }
+
+        /* Toast Notification Animations */
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(100%);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes slideOutDown {
+          from {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          to {
+            opacity: 0;
+            transform: translateY(100%);
+          }
+        }
+
+        @keyframes progress {
+          from {
+            width: 100%;
+          }
+          to {
+            width: 0%;
+          }
+        }
+
+        .toast-notification {
+          animation: slideInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .toast-notification.toast-hiding {
+          animation: slideOutDown 0.3s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+        }
+
+        .toast-progress {
+          animation: progress 5s linear forwards;
+        }
+
+        @media (max-width: 640px) {
+          .toast-notification {
+            bottom: 1rem;
+            right: 1rem;
+            left: 1rem;
+            max-width: none;
+            margin: 0;
+          }
         }
       `}</style>
     </div>

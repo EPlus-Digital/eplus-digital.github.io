@@ -6,29 +6,50 @@
     <title>E+ Digital</title>
     <script>
       // Single Page Apps for GitHub Pages
-      // This script redirects 404 errors to the React app with the path as a query parameter
-      // Prevents infinite loops by checking if already redirected
+      // This script redirects 404 errors to the React app
+      // Uses multiple safeguards to prevent infinite loops
 
       (function() {
         var l = window.location;
-        var search = l.search;
         var pathname = l.pathname;
+        var search = l.search;
+        var hash = l.hash || '';
         
-        // CRITICAL: Prevent infinite loops
-        // If we're already on a redirect URL (has ?/ in search), don't redirect
-        if (search && search.indexOf('?/') !== -1) {
-          // Already redirected, React Router will handle it - don't redirect again
-          return;
-        }
-        
-        // Don't redirect if we're on the root path
+        // SAFEGUARD 1: Don't redirect if we're on the root path
         if (pathname === '/' || pathname === '/index.html' || pathname === '') {
           return;
         }
         
-        // Extract valid path segments (exclude empty strings and index.html)
+        // SAFEGUARD 2: Don't redirect if already has redirect query parameter
+        // Check if search contains '/' at position 1 (meaning ?/path format)
+        if (search && (search.charAt(1) === '/' || search.indexOf('_redirected=') !== -1)) {
+          // Already redirected, load index.html instead
+          try {
+            sessionStorage.removeItem('github-pages-redirect');
+          } catch(e) {}
+          return;
+        }
+        
+        // SAFEGUARD 3: Use sessionStorage to track redirects
+        var redirectKey = 'github-pages-redirect';
+        var redirectCount = 0;
+        try {
+          var stored = sessionStorage.getItem(redirectKey);
+          if (stored) {
+            redirectCount = parseInt(stored, 10) || 0;
+          }
+          // Prevent infinite loops - max 2 redirects per session
+          if (redirectCount >= 2) {
+            sessionStorage.removeItem(redirectKey);
+            return;
+          }
+        } catch(e) {
+          // If sessionStorage is not available, continue anyway
+        }
+        
+        // SAFEGUARD 4: Extract valid path segments
         var pathSegments = pathname.split('/').filter(function(segment) {
-          return segment !== '' && segment !== 'index.html';
+          return segment !== '' && segment !== 'index.html' && segment !== '404.html';
         });
         
         // Don't redirect if no valid path segments
@@ -39,16 +60,29 @@
         // Build the path to redirect to
         var redirectPath = '/' + pathSegments.join('/');
         
-        // Build redirect URL: /?/path#hash
+        // Increment redirect count in sessionStorage
+        try {
+          sessionStorage.setItem(redirectKey, String(redirectCount + 1));
+        } catch(e) {
+          // Ignore sessionStorage errors
+        }
+        
+        // Build redirect URL: /?/path&_redirected=1
         var redirectUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + 
-          '/?/' + redirectPath.replace(/&/g, '~and~') +
-          (l.hash ? l.hash : '');
+          '/?/' + redirectPath.replace(/&/g, '~and~') + 
+          '&_redirected=1' + hash;
         
         // Perform redirect using replace (no history entry)
+        // This prevents the redirect from being added to browser history
         l.replace(redirectUrl);
       })();
     </script>
   </head>
   <body>
+    <div style="display: flex; align-items: center; justify-content: center; height: 100vh; font-family: system-ui, -apple-system, sans-serif;">
+      <div style="text-align: center; color: #9ca3af;">
+        <p>Redirecting...</p>
+      </div>
+    </div>
   </body>
 </html>
