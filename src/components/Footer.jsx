@@ -62,33 +62,24 @@ const Footer = () => {
 
             {/* Social Media */}
             <div className="flex items-center space-x-2">
-              <a
-                href="https://linkedin.com/company/eplusdigital"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-slate-800/60 border border-slate-700/60 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary/60 hover:bg-primary/10 hover:scale-110 hover:-rotate-6 transition-all duration-300 shadow-sm hover:shadow-primary/20"
+              <div
+                className="w-9 h-9 rounded-lg bg-slate-800/60 border border-slate-700/60 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary/60 hover:bg-primary/10 hover:scale-110 hover:-rotate-6 transition-all duration-300 shadow-sm hover:shadow-primary/20 cursor-default"
                 aria-label="LinkedIn"
               >
                 <FiLinkedin size={16} />
-              </a>
-              <a
-                href="https://instagram.com/eplusdigital"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-slate-800/60 border border-slate-700/60 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary/60 hover:bg-primary/10 hover:scale-110 hover:rotate-6 transition-all duration-300 shadow-sm hover:shadow-primary/20"
+              </div>
+              <div
+                className="w-9 h-9 rounded-lg bg-slate-800/60 border border-slate-700/60 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary/60 hover:bg-primary/10 hover:scale-110 hover:rotate-6 transition-all duration-300 shadow-sm hover:shadow-primary/20 cursor-default"
                 aria-label="Instagram"
               >
                 <FiInstagram size={16} />
-              </a>
-              <a
-                href="https://github.com/eplusdigital"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-slate-800/60 border border-slate-700/60 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary/60 hover:bg-primary/10 hover:scale-110 hover:-rotate-6 transition-all duration-300 shadow-sm hover:shadow-primary/20"
+              </div>
+              <div
+                className="w-9 h-9 rounded-lg bg-slate-800/60 border border-slate-700/60 flex items-center justify-center text-gray-400 hover:text-white hover:border-primary/60 hover:bg-primary/10 hover:scale-110 hover:-rotate-6 transition-all duration-300 shadow-sm hover:shadow-primary/20 cursor-default"
                 aria-label="GitHub"
               >
                 <FiGithub size={16} />
-              </a>
+              </div>
             </div>
           </div>
 
@@ -161,9 +152,7 @@ const Footer = () => {
               {t.footer.copyright}
             </p>
             <div className="flex items-center space-x-2 text-slate-500 text-xs">
-              <span>Made with</span>
-              <FiHeart className="text-red-500 animate-pulse" size={12} />
-              <span>by <span className="text-primary font-semibold hover:text-cyan-400 transition-colors">E+ Digital</span></span>
+              <span>Made with by <span className="text-primary font-semibold hover:text-cyan-400 transition-colors">E+ Digital</span></span>
             </div>
           </div>
         </div>
