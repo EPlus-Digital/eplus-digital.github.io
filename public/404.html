@@ -6,63 +6,49 @@
     <title>E+ Digital</title>
     <script>
       // Single Page Apps for GitHub Pages
-      // https://github.com/rafgraph/spa-github-pages
-      // This script takes the current url and converts the path and query
-      // string into just a query string, and then redirects the browser
-      // to the new url with only a query string and hash fragment,
-      // e.g., https://www.foo.tld/one/two?a=b&c=d#qwe, becomes
-      // https://www.foo.tld/?/one/two&a=b~and~c=d#qwe
-      // Note: this 404.html file must be at least 512 bytes for it to work
-      // with Internet Explorer (it is currently > 512 bytes)
+      // This script redirects 404 errors to the React app with the path as a query parameter
+      // Prevents infinite loops by checking if already redirected
 
-      // If you're creating a Project Pages site and NOT using a custom domain,
-      // then set segmentCount to 1 (enterprise users may need to set it to > 1).
-      // This way the code will only replace the route part and not the real directory.
-      // For example, if your app is at https://username.github.io/repo-name/,
-      // and the route is /one/two, then the browser will redirect to:
-      // https://username.github.io/repo-name/?/one/two
-      // But if your app is at https://custom-domain.com/,
-      // then the browser will redirect to:
-      // https://custom-domain.com/?/one/two
-
-      var segmentCount = 0;
-
-      // Prevent infinite loop - if we're already on a redirect URL, don't redirect again
-      var l = window.location;
-      var search = l.search;
-      
-      // If we're already redirected (has ?/ in search) or on root, don't redirect
-      if (search && search.indexOf('?/') !== -1) {
-        // Already redirected, let React Router handle it
-        return;
-      }
-      
-      // If we're on the root path and no special query, don't redirect
-      if (l.pathname === '/' && !search) {
-        return;
-      }
-      
-      // Only redirect if we're not on the index.html (404 case)
-      var pathSegments = l.pathname.split('/').filter(function(segment) {
-        return segment !== '';
-      });
-      
-      // If pathname is just '/' or empty, don't redirect (root page)
-      if (pathSegments.length === 0 || (pathSegments.length === 1 && pathSegments[0] === 'index.html')) {
-        return;
-      }
-
-      l.replace(
-        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-        l.pathname.split('/').slice(0, 1 + segmentCount).join('/') + '/?/' +
-        l.pathname.slice(1).split('/').slice(segmentCount).join('/').replace(/&/g, '~and~') +
-        (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-        l.hash
-      );
-
+      (function() {
+        var l = window.location;
+        var search = l.search;
+        var pathname = l.pathname;
+        
+        // CRITICAL: Prevent infinite loops
+        // If we're already on a redirect URL (has ?/ in search), don't redirect
+        if (search && search.indexOf('?/') !== -1) {
+          // Already redirected, React Router will handle it - don't redirect again
+          return;
+        }
+        
+        // Don't redirect if we're on the root path
+        if (pathname === '/' || pathname === '/index.html' || pathname === '') {
+          return;
+        }
+        
+        // Extract valid path segments (exclude empty strings and index.html)
+        var pathSegments = pathname.split('/').filter(function(segment) {
+          return segment !== '' && segment !== 'index.html';
+        });
+        
+        // Don't redirect if no valid path segments
+        if (pathSegments.length === 0) {
+          return;
+        }
+        
+        // Build the path to redirect to
+        var redirectPath = '/' + pathSegments.join('/');
+        
+        // Build redirect URL: /?/path#hash
+        var redirectUrl = l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') + 
+          '/?/' + redirectPath.replace(/&/g, '~and~') +
+          (l.hash ? l.hash : '');
+        
+        // Perform redirect using replace (no history entry)
+        l.replace(redirectUrl);
+      })();
     </script>
   </head>
   <body>
   </body>
 </html>
-

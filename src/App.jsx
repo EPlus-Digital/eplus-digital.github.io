@@ -23,71 +23,56 @@ function ScrollToTop() {
 function RedirectHandler() {
   const location = useLocation();
   const navigate = useNavigate();
-  const hasProcessed = useRef(false);
+  const hasRedirected = useRef(false);
 
   useEffect(() => {
-    // Only process redirect once on mount
-    if (hasProcessed.current) {
+    // Only process redirect once on initial mount
+    // This prevents infinite loops
+    if (hasRedirected.current) {
       return;
     }
 
     const search = location.search;
+    const pathname = location.pathname;
     
     // Check if we have the GitHub Pages redirect pattern from 404.html
+    // Format: /?/about means we need to redirect to /about
     if (search && search.startsWith('?/')) {
-      hasProcessed.current = true;
+      // Mark as redirected immediately to prevent re-processing
+      hasRedirected.current = true;
       
       // Extract the actual path from the query string
-      // Format: /?/about -> /about
       let actualPath = search.substring(2); // Remove '?/'
       actualPath = actualPath.replace(/~and~/g, '&');
       
-      // Parse path, query params, and hash
+      // Parse hash if present
       const hashIndex = actualPath.indexOf('#');
-      const ampersandIndex = actualPath.indexOf('&');
-      
       let path = actualPath;
       let hash = '';
-      let queryParams = '';
       
-      // Determine the end of the path (before hash or query params)
-      let pathEnd = actualPath.length;
       if (hashIndex !== -1) {
-        pathEnd = Math.min(pathEnd, hashIndex);
+        path = actualPath.substring(0, hashIndex);
         hash = actualPath.substring(hashIndex);
       }
-      if (ampersandIndex !== -1 && ampersandIndex < pathEnd) {
-        pathEnd = ampersandIndex;
-        // Query params after & (but before # if hash exists)
-        const queryStart = ampersandIndex + 1;
-        const queryEnd = hashIndex !== -1 ? hashIndex : actualPath.length;
-        queryParams = actualPath.substring(queryStart, queryEnd);
-      }
-      
-      path = actualPath.substring(0, pathEnd);
       
       // Ensure path starts with /
       if (!path.startsWith('/')) {
         path = '/' + path;
       }
       
-      // Build final URL
-      let finalPath = path;
-      if (queryParams) {
-        finalPath += '?' + queryParams;
-      }
-      if (hash) {
-        finalPath += hash;
-      }
+      // Build final path with hash
+      const targetPath = path + hash;
       
-      // Use React Router navigate with replace to avoid adding to history
-      // Small delay to ensure React Router is ready
-      setTimeout(() => {
-        navigate(finalPath, { replace: true });
-      }, 0);
-    } else {
-      // Mark as processed even if no redirect needed
-      hasProcessed.current = true;
+      // Only redirect if we're not already on the target path
+      // This prevents unnecessary redirects
+      if (pathname !== path) {
+        // Use React Router navigate with replace to clean the URL
+        // This removes the ?/ parameter from the URL and updates to clean path
+        navigate(targetPath, { replace: true });
+      } else {
+        // Already on the correct path, just clean the URL by removing query params
+        window.history.replaceState({}, '', pathname + hash);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty dependency array - only run once on mount

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../context/LanguageContext';
-import { FiMail, FiPhone, FiMapPin, FiSend, FiMessageCircle } from 'react-icons/fi';
+import { FiMail, FiPhone, FiMapPin, FiSend, FiMessageCircle, FiCheckCircle, FiAlertCircle, FiLoader } from 'react-icons/fi';
+import emailjs from '@emailjs/browser';
 
 const Contact = () => {
   const { t, language } = useLanguage();
@@ -9,6 +10,9 @@ const Contact = () => {
     email: '',
     message: '',
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null); // 'success', 'error', null
+  const [submitMessage, setSubmitMessage] = useState('');
 
   // Intersection Observer for scroll animations
   const observerRef = useRef(null);
@@ -62,15 +66,83 @@ const Contact = () => {
     };
   }, []);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    // Initialize EmailJS with public key from environment variable
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+    
+    if (publicKey) {
+      emailjs.init(publicKey);
+    }
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
-    const message = language === 'en'
-      ? 'Thank you for your message! We will get back to you soon.'
-      : 'Mesajınız için teşekkürler! En kısa sürede size dönüş yapacağız.';
-    alert(message);
-    setFormData({ name: '', email: '', message: '' });
+    
+    // Get EmailJS configuration from environment variables
+    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+    // Check if EmailJS is configured
+    if (!serviceId || !templateId || !publicKey) {
+      setSubmitStatus('error');
+      const missingVars = [];
+      if (!serviceId) missingVars.push('VITE_EMAILJS_SERVICE_ID');
+      if (!templateId) missingVars.push('VITE_EMAILJS_TEMPLATE_ID');
+      if (!publicKey) missingVars.push('VITE_EMAILJS_PUBLIC_KEY');
+      
+      setSubmitMessage(
+        language === 'en'
+          ? `Email service is not configured. Missing: ${missingVars.join(', ')}. Please check your .env file and restart the dev server.`
+          : `E-posta servisi yapılandırılmamış. Eksik: ${missingVars.join(', ')}. Lütfen .env dosyanızı kontrol edin ve dev server'ı yeniden başlatın.`
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitStatus(null);
+    setSubmitMessage('');
+
+    try {
+      // Prepare template parameters
+      const templateParams = {
+        from_name: formData.name,
+        from_email: formData.email,
+        message: formData.message,
+        to_email: 'infoeplusdigital@gmail.com',
+        reply_to: formData.email,
+      };
+
+      // Send email using EmailJS
+      await emailjs.send(serviceId, templateId, templateParams, publicKey);
+
+      // Success
+      setSubmitStatus('success');
+      setSubmitMessage(
+        language === 'en'
+          ? 'Thank you for your message! We will get back to you soon.'
+          : 'Mesajınız için teşekkürler! En kısa sürede size dönüş yapacağız.'
+      );
+
+      // Reset form
+      setFormData({ name: '', email: '', message: '' });
+
+      // Clear success message after 5 seconds
+      setTimeout(() => {
+        setSubmitStatus(null);
+        setSubmitMessage('');
+      }, 5000);
+    } catch (error) {
+      console.error('EmailJS Error:', error);
+      setSubmitStatus('error');
+      setSubmitMessage(
+        language === 'en'
+          ? 'Sorry, there was an error sending your message. Please try again later or contact us directly at infoeplusdigital@gmail.com'
+          : 'Üzgünüz, mesajınız gönderilirken bir hata oluştu. Lütfen daha sonra tekrar deneyin veya doğrudan infoeplusdigital@gmail.com adresinden bizimle iletişime geçin.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e) => {
@@ -177,11 +249,41 @@ const Contact = () => {
                   </div>
                   <button
                     type="submit"
-                    className="group/btn w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-primary to-cyan-500 text-white font-semibold rounded-xl hover:shadow-2xl hover:shadow-primary/50 transition-all transform hover:scale-105"
+                    disabled={isSubmitting}
+                    className={`group/btn w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-primary to-cyan-500 text-white font-semibold rounded-xl hover:shadow-2xl hover:shadow-primary/50 transition-all transform hover:scale-105 ${
+                      isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
+                    }`}
                   >
-                    {t.contact.form.send}
-                    <FiSend className="ml-2 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                    {isSubmitting ? (
+                      <>
+                        <FiLoader className="mr-2 animate-spin" />
+                        {language === 'en' ? 'Sending...' : 'Gönderiliyor...'}
+                      </>
+                    ) : (
+                      <>
+                        {t.contact.form.send}
+                        <FiSend className="ml-2 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                      </>
+                    )}
                   </button>
+
+                  {/* Status Message */}
+                  {submitStatus && (
+                    <div
+                      className={`mt-4 p-4 rounded-lg flex items-start gap-3 ${
+                        submitStatus === 'success'
+                          ? 'bg-green-500/10 border border-green-500/30 text-green-400'
+                          : 'bg-red-500/10 border border-red-500/30 text-red-400'
+                      }`}
+                    >
+                      {submitStatus === 'success' ? (
+                        <FiCheckCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                      ) : (
+                        <FiAlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                      )}
+                      <p className="text-sm leading-relaxed">{submitMessage}</p>
+                    </div>
+                  )}
                 </form>
               </div>
             </div>
